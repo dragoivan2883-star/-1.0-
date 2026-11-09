@@ -1,0 +1,9 @@
+{
+  "description": "Исключительно демонстрационная карточка; все значения вымышлены.",
+  "clientName": "Анна",
+  "vehicle": "Kia Rio",
+  "expiryDate": "20 ноября",
+  "managerName": "Алексей",
+  "osago": { "insurer": null, "price": null },
+  "miniKasko": null
+}
