@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Альтернатива · Навигатор звонка v2 · Night Edition</title>
+<style>
+:root{
+  --page:#f3f5f9;--ink:#182538;--muted:#627086;--line:#dce3ed;
+  --blue:#2458a6;--blue-dark:#183d76;--blue-tint:#eaf2ff;
+  --green:#15765c;--green-tint:#e7f6ef;--amber:#99600f;--amber-tint:#fff5df;
+  --red:#ae3642;--red-tint:#fff0f1;--card:#fff;--shadow:0 16px 56px rgba(18,39,70,.08);
+  --radius:20px;
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  font-synthesis:none;
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--page);color:var(--ink);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,textarea{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.4}
+button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid #77a5f4;outline-offset:3px}
+button:active:not(:disabled){transform:translateY(1px)}
+button,.chip,.action-button{transition:background .14s ease,border-color .14s ease,box-shadow .14s ease,transform .08s ease}
+.hidden{display:none!important}
+.app{min-height:100vh}
+.topbar{background:#16243a;color:#fff}
+.top-inner{max-width:1320px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:22px;padding:20px 30px}
+.logo{display:flex;align-items:center;gap:13px;min-width:0}
+.brand-symbol{display:grid;place-items:center;flex:0 0 40px;height:40px;border:1px solid rgba(255,255,255,.30);border-radius:12px;background:rgba(255,255,255,.07);color:#d7e7ff;font-size:24px;font-weight:750}
+.brand-title{font-size:19px;font-weight:780;letter-spacing:-.035em;line-height:1.1}
+.brand-sub{color:#aabbd1;font-size:12px;margin-top:4px;letter-spacing:.02em}
+.top-actions{display:flex;align-items:center;gap:13px;flex-wrap:wrap;justify-content:flex-end}
+.demo-pill{font-size:11px;text-transform:uppercase;letter-spacing:.09em;font-weight:750;color:#b8d3fa;border:1px solid #496381;border-radius:999px;padding:7px 11px;white-space:nowrap}
+.mode-switch{display:flex;background:#0c192c;padding:4px;border-radius:12px;gap:3px;border:1px solid #43546c}
+.mode-switch button{border:0;color:#acbad0;background:transparent;padding:8px 12px;font-size:12px;font-weight:750;border-radius:8px;white-space:nowrap}
+.mode-switch button.active{color:#13243b;background:#fff;box-shadow:0 3px 10px #0003}
+.icon-btn{background:none;border:1px solid transparent;color:inherit;min-width:38px;height:38px;display:inline-grid;place-items:center;border-radius:10px;font-weight:750}
+.topbar .icon-btn{border-color:#45576e;background:#ffffff0b}
+.icon-btn:hover{background:#fff2}
+.layout{max-width:1320px;margin:0 auto;padding:25px 30px 48px}
+.overline{font-size:11px;letter-spacing:.11em;font-weight:820;text-transform:uppercase;color:var(--muted)}
+.strip{display:flex;align-items:stretch;justify-content:space-between;gap:20px;padding:15px 19px;background:#fff;border:1px solid var(--line);border-radius:16px;margin-bottom:18px}
+.client-grid{display:flex;flex-wrap:wrap;gap:19px 40px;align-items:center}
+.client-item{display:grid;gap:2px;min-width:105px}.client-item span{font-size:12px;color:var(--muted)}.client-item strong{font-size:15px;font-weight:750}
+.connection{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:12px;white-space:nowrap;align-self:center}
+.connection-dot{width:9px;height:9px;background:#16a180;border-radius:100%;box-shadow:0 0 0 4px #e0f6ed}
+.workspace{display:grid;grid-template-columns:minmax(0,1fr) 316px;gap:19px;align-items:start}
+.left-pane{display:grid;gap:16px;min-width:0}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.conversation{padding:32px 34px 26px}
+.card-head{display:flex;justify-content:space-between;align-items:start;gap:16px}
+.step-line{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.step-badge{color:var(--blue-dark);font-weight:820;font-size:12px;background:var(--blue-tint);border-radius:999px;padding:7px 11px;letter-spacing:.04em}
+.step-type{color:var(--muted);font-size:12px;font-weight:660}
+.icon-help{width:29px;height:29px;border:1px solid var(--line);border-radius:50%;background:#fff;color:var(--muted);font-size:14px;font-weight:850;flex:0 0 auto;position:relative}
+.icon-help:hover{border-color:#91b7eb;color:var(--blue-dark);background:var(--blue-tint)}
+[data-tip]{position:relative}
+[data-tip]:hover::after,[data-tip]:focus-visible::after{content:attr(data-tip);position:absolute;z-index:20;right:0;bottom:calc(100% + 10px);width:max-content;max-width:min(260px,80vw);padding:9px 12px;background:#13233b;color:white;font-size:12px;font-weight:500;line-height:1.4;white-space:normal;border-radius:9px;box-shadow:0 6px 30px #14223845;pointer-events:none}
+.section-name{font-size:clamp(24px,3vw,31px);font-weight:790;line-height:1.2;letter-spacing:-.042em;margin:23px 0 22px}
+.say-box{background:linear-gradient(125deg,#edf4ff 0%,#f7faff 100%);border:1px solid #d1e0f6;border-left:5px solid var(--blue);border-radius:15px;padding:25px 27px 24px}
+.say-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.say-label{color:#23529b;font-size:11px;font-weight:810;letter-spacing:.11em;text-transform:uppercase}
+.copy-btn{background:#fff;border:1px solid #c4d4e9;color:#23529b;border-radius:9px;padding:7px 10px;font-size:12px;font-weight:750}
+.copy-btn:hover{background:#deebff}
+.say-text{font-size:clamp(21px,2.15vw,28px);font-weight:620;line-height:1.45;letter-spacing:-.027em;margin:0;max-width:780px;white-space:pre-wrap}
+.coach{background:#f6f8fb;border:1px solid #e3e8f1;border-radius:12px;display:flex;gap:12px;align-items:start;padding:15px 17px;margin-top:17px;color:#41536e;font-size:14px}
+.coach-icon{font-size:17px;color:#567299;flex:0 0 auto;line-height:1.2}.coach strong{display:block;color:#243651;font-size:13px;margin-bottom:3px}.coach p{margin:0}
+.actions-card{padding:27px 34px 28px}
+.actions-title{font-size:19px;line-height:1.2;font-weight:790;letter-spacing:-.025em;margin:0}
+.actions-sub{color:var(--muted);font-size:13px;margin:5px 0 19px}
+.answers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.answer{min-height:72px;border:1px solid #ccd7e5;background:#fff;border-radius:13px;text-align:left;padding:14px 15px;display:flex;align-items:center;gap:12px;color:var(--ink);font-size:15px;font-weight:760;line-height:1.3}
+.answer .answer-icon{width:34px;height:34px;flex:0 0 34px;display:grid;place-items:center;border-radius:10px;background:#edf1f6;color:#56667b;font-weight:800;font-size:17px}
+.answer:hover{box-shadow:0 5px 20px #28497617;transform:translateY(-1px)}
+.answer.tone-primary{border-color:#b9cde9;background:#f5f9ff}.answer.tone-primary .answer-icon{background:#dfebff;color:#2458a6}.answer.tone-primary:hover{border-color:#508bd6;background:#eaf2ff}
+.answer.tone-good{border-color:#b5dfce;background:#f5fcf8}.answer.tone-good .answer-icon{background:#d9f2e6;color:#14775c}.answer.tone-good:hover{border-color:#60b59b;background:#eaf8ef}
+.answer.tone-warn{border-color:#e9d5a7;background:#fffaf0}.answer.tone-warn .answer-icon{background:#ffedc6;color:#99600f}.answer.tone-warn:hover{border-color:#ddb260;background:#fff3d8}
+.answer.tone-danger{border-color:#e7c1c3;background:#fff7f7}.answer.tone-danger .answer-icon{background:#ffe1e4;color:#af3945}.answer.tone-danger:hover{border-color:#db8992;background:#ffecef}
+.answer.secondary{border-style:dashed}.answer small{font-size:11px;display:block;color:var(--muted);font-weight:500;margin-top:3px}
+.quickbar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:21px;padding-top:19px;border-top:1px solid var(--line)}
+.quick-title{font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;color:var(--muted);margin-right:5px}
+.quick{background:#fff;border:1px solid var(--line);border-radius:10px;min-height:39px;padding:8px 12px;font-size:13px;color:#34465e;font-weight:710}
+.quick:hover{border-color:#a8bbd3;background:#f4f7fb}.quick.objection{border-color:#b6ccee;background:#edf4ff;color:#22559a}.quick.callback{border-color:#ecd6a4;background:#fff6e5;color:#916018}.quick.end{border-color:#e8c7c7;color:#a43c42}
+.side{display:grid;gap:16px;position:sticky;top:18px}
+.sidecard{padding:22px 21px;box-shadow:none}
+.side-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.side-head h2{font-size:17px;margin:0;font-weight:800;letter-spacing:-.02em}
+.side-muted{font-size:12px;color:var(--muted);margin:7px 0 16px}
+.trail{display:grid;gap:0;position:relative}
+.trail-item{position:relative;display:grid;grid-template-columns:22px 1fr;gap:11px;align-items:start;width:100%;padding:0 0 17px;border:0;text-align:left;background:none;color:inherit}
+.trail-item:not(:last-child)::before{content:'';position:absolute;width:2px;background:#d6dfe9;top:21px;bottom:0;left:10px}
+.trail-dot{border:2px solid #c2cfdd;border-radius:100%;width:22px;height:22px;display:grid;place-items:center;background:#fff;color:#64778c;font-size:10px;font-weight:850;z-index:1}
+.trail-item.current .trail-dot{background:var(--blue);border-color:var(--blue);color:#fff}
+.trail-item.past .trail-dot{background:#e8f7ee;border-color:#7ec5a7;color:#15765c}
+.trail-label{font-weight:710;font-size:13px;line-height:1.35;margin-top:1px}
+.trail-via{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.35}
+.trail-item.past:hover .trail-label{text-decoration:underline;text-underline-offset:3px;color:var(--blue-dark)}
+.side-tip{border:1px solid #d8e4f2;background:#f5f9ff;padding:13px 14px;border-radius:12px;font-size:12px;color:#435771;margin-top:3px}
+.side-tip strong{color:#244875}
+.tool-help{padding:19px 21px}
+.tool-help details{font-size:12px;color:#526277}.tool-help summary{font-weight:790;color:#354861;cursor:pointer;list-style:none}.tool-help summary::after{content:'⌄';float:right}.tool-help details[open] summary::after{content:'⌃'}
+.tool-help kbd{display:inline-block;background:#eff2f7;border:1px solid #d7dfe9;border-radius:5px;font-size:11px;color:#33435a;padding:2px 6px;margin:4px 3px}
+.tool-help p{margin:12px 0 0}
+.footer{display:flex;align-items:center;justify-content:space-between;gap:16px;color:#6d7b90;font-size:11px;margin-top:18px}
+.link-btn{border:0;background:none;color:var(--blue-dark);font-size:12px;font-weight:780;padding:5px}
+.link-btn:hover{text-decoration:underline}
+.final-card{border:1px solid #bfdfd1;border-radius:14px;background:#eff9f4;padding:18px 20px;margin-top:20px;color:#145f4a;display:flex;gap:13px;align-items:start}
+.final-card.warn{border-color:#f2d7b1;background:#fff7ea;color:#8e560b}.final-card.danger{border-color:#f2c6c9;background:#fff3f3;color:#a83340}
+.final-card b{display:block;font-size:15px;margin-bottom:3px}.final-card p{margin:0;font-size:13px;color:#465667}
+.fade{position:fixed;inset:0;background:rgba(11,24,45,.55);z-index:80;opacity:0;transition:opacity .2s;pointer-events:none}
+.fade.show{opacity:1;pointer-events:auto}
+.drawer{position:fixed;z-index:81;right:0;top:0;bottom:0;width:min(480px,100vw);background:#fff;display:flex;flex-direction:column;box-shadow:-25px 0 70px #10213a35;transform:translateX(104%);transition:transform .22s ease;visibility:hidden}
+.drawer.open{transform:translateX(0);visibility:visible}
+.drawer-head{padding:25px 27px 21px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:start;gap:10px}
+.drawer-head h2{font-size:24px;letter-spacing:-.03em;margin:4px 0 0;line-height:1.25}.drawer-head p{font-size:12px;color:var(--muted);margin:7px 0 0}
+.drawer-close{border:1px solid var(--line);border-radius:10px;color:#415067;background:#fff;font-size:22px;width:38px;height:38px;line-height:1}
+.drawer-scroll{overflow-y:auto;min-height:0;padding:22px 27px 28px;flex:1}
+.search-wrap{position:relative;margin-bottom:17px}.search-wrap::before{content:'⌕';position:absolute;left:13px;top:8px;font-size:25px;line-height:1;color:#75859a}
+.search-wrap input{width:100%;border:1px solid #d3ddea;background:#f7f9fc;border-radius:11px;padding:13px 12px 13px 42px;font-size:14px;color:#15253a}
+.obj-list{display:grid;gap:8px}.obj-option{border:1px solid #d7e0eb;text-align:left;background:white;padding:13px 14px;border-radius:10px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:680;font-size:14px}
+.obj-option:hover{background:#f3f7fc}.obj-option.active{border-color:#5c90d7;background:#edf4ff;color:#194a92}.obj-option small{font-size:10px;color:#91601a;background:#fff1d5;padding:3px 6px;border-radius:5px;font-weight:800}
+.obj-detail{margin-top:19px;padding:19px;background:#eff5ff;border:1px solid #cddff8;border-radius:13px}
+.obj-detail small{font-weight:800;color:#2d62ac;letter-spacing:.08em;font-size:11px;text-transform:uppercase}
+.obj-detail p{font-size:19px;line-height:1.5;font-weight:630;letter-spacing:-.02em;margin:10px 0 13px}
+.obj-detail .draft{border-radius:8px;background:#fff4db;border:1px solid #ebd39c;color:#915e15;font-size:12px;padding:9px 11px;margin:12px 0}
+.drawer-footer{border-top:1px solid var(--line);padding:15px 27px;display:flex;align-items:center;gap:10px}
+.btn-main{border:0;border-radius:10px;background:#2458a6;color:#fff;font-size:14px;font-weight:750;min-height:44px;padding:11px 16px}
+.btn-main:hover{background:#194889}.btn-soft{border:1px solid #ccd8e8;border-radius:10px;background:#fff;color:#24466e;font-size:14px;font-weight:750;min-height:44px;padding:10px 15px}
+.no-results{font-size:13px;color:var(--muted);padding:20px 5px}
+.toast{position:fixed;z-index:120;left:50%;bottom:25px;transform:translate(-50%,110px);opacity:0;background:#162942;color:#fff;border:1px solid #59708c;border-radius:12px;padding:11px 18px;font-size:13px;font-weight:640;box-shadow:0 14px 40px #10213948;transition:transform .2s,opacity .2s;pointer-events:none}
+.toast.visible{transform:translate(-50%,0);opacity:1}
+@media(max-width:1100px){.workspace{grid-template-columns:minmax(0,1fr) 275px}.conversation,.actions-card{padding-left:25px;padding-right:25px}.answers{gap:8px}.answer{padding:12px;font-size:14px}}
+@media(max-width:850px){.top-inner{padding:15px 18px}.layout{padding:18px 16px 28px}.workspace{grid-template-columns:1fr}.side{position:static;display:grid;grid-template-columns:1fr 1fr}.strip{gap:12px}.connection{display:none}.sidecard{order:2}.tool-help{order:1}}
+@media(max-width:610px){.top-inner{align-items:flex-start;flex-direction:column;gap:13px}.top-actions{width:100%;justify-content:space-between}.strip{padding:13px}.client-grid{gap:12px 18px}.client-item{min-width:80px}.client-item span{font-size:11px}.client-item strong{font-size:13px}.conversation,.actions-card{padding:19px 18px 20px}.section-name{margin:18px 0}.say-box{padding:18px 18px 19px}.say-text{font-size:22px}.answers{grid-template-columns:1fr}.answer{min-height:64px}.side{display:grid;grid-template-columns:1fr}.sidecard{order:1}.tool-help{order:2}.quickbar{gap:8px}.quick-title{flex:0 0 100%;margin-bottom:3px}.footer{flex-direction:column;align-items:start}.drawer-head,.drawer-scroll,.drawer-footer{padding-left:18px;padding-right:18px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+
+/* ALTERNATIVA / NIGHT EDITION — visual only, preserves existing call-flow engine */
+:root{
+  color-scheme:dark;
+  --page:#080e19;
+  --ink:#edf2fc;
+  --muted:#a3b2c9;
+  --line:#29364d;
+  --card:#131c2d;
+  --blue:#a48dff;
+  --blue-dark:#c4b6ff;
+  --blue-tint:#242342;
+  --green:#6bd9b6;
+  --green-tint:#12382f;
+  --amber:#ffd37b;
+  --amber-tint:#3a2c17;
+  --red:#ff8f9e;
+  --red-tint:#3c222c;
+  --shadow:0 14px 42px rgba(0,0,0,.20);
+  font-family:Inter,'Segoe UI Variable','Segoe UI',-apple-system,BlinkMacSystemFont,Roboto,Arial,sans-serif;
+}
+html{color-scheme:dark}
+body{
+  background:
+    radial-gradient(ellipse 60% 35% at 20% -15%,rgba(114,88,238,.14),transparent 75%),
+    radial-gradient(ellipse 50% 25% at 92% 6%,rgba(36,171,171,.085),transparent 80%),
+    var(--page);
+  color:var(--ink);
+}
+::selection{background:#6959b1;color:#fff}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #c7b7ff;outline-offset:3px}
+button:disabled{opacity:.48}
+.topbar{
+  color:#f2f5ff;
+  background:linear-gradient(112deg,#15172b 0%,#101b2e 62%,#102332 100%);
+  border-bottom:1px solid #38405d;
+  box-shadow:0 4px 30px #0003;
+}
+.brand-symbol{background:linear-gradient(145deg,#302954,#1b3049);color:#e5dcff;border:1px solid #8273c7;box-shadow:inset 0 0 20px #ae7fff0c}
+.brand-title{color:#f3f3ff;letter-spacing:-.026em}
+.brand-title span{color:#b7a5ff!important}
+.brand-sub{color:#a8b9d1}
+.demo-pill{border-color:#365e60;color:#8de9d7;background:#0e31358a}
+.mode-switch{background:#0d1423;border-color:#39465d}
+.mode-switch button{color:#b3bfd6}
+.mode-switch button:hover:not(.active){background:#212b40;color:#fff}
+.mode-switch button.active{color:#17142b;background:#b6a4ff;box-shadow:0 2px 12px #aa8cff25}
+.topbar .icon-btn{background:#202b3e;border-color:#465675;color:#e0eaff}
+.icon-btn:hover,.topbar .icon-btn:hover{background:#343359;color:#fff}
+.strip{
+  color:var(--ink);
+  background:linear-gradient(107deg,#151e31 15%,#18223a 100%);
+  border-color:#36435a;
+  box-shadow:0 6px 24px #0002;
+}
+.client-item span{color:#a8b6ce}
+.client-item strong{color:#f6f6ff}
+.connection{color:#9eafc6}
+.connection-dot{background:#60ddb4;box-shadow:0 0 0 4px #153c33,0 0 12px #45ddaa40}
+.card{background:#131c2c;border-color:#2d3b53;box-shadow:var(--shadow)}
+.conversation{background:linear-gradient(155deg,#182238 0%,#131d2e 78%)}
+.actions-card{background:linear-gradient(160deg,#131e30,#111a29)}
+.overline,.step-type,.side-muted,.actions-sub,.trail-via{color:var(--muted)}
+.step-badge{background:#302750;color:#c2afff;border:1px solid #57467c}
+.section-name{color:#f5f5ff}
+.icon-help{background:#202a3d;color:#b3c2d8;border-color:#46536a}
+.icon-help:hover{color:#e0d6ff;border-color:#9b86ea;background:#33304e}
+[data-tip]:hover::after,[data-tip]:focus-visible::after{
+  background:#28324a;color:#f6f2ff;border:1px solid #7767ad;
+  box-shadow:0 12px 32px #0008;
+}
+.say-box{
+  background:linear-gradient(130deg,#222440 0%,#1a2b42 100%);
+  border:1px solid #494971;
+  border-left:5px solid #ab91ff;
+  box-shadow:inset 0 0 50px #ac85ff06;
+}
+.say-label{color:#c6b8ff}
+.say-text{color:#f4f5ff;font-weight:610}
+.copy-btn{background:#282a46;border:1px solid #675a94;color:#e2d9ff}
+.copy-btn:hover{background:#3b3460;border-color:#aa96ec}
+.coach{color:#bdcce0;background:#172338;border:1px solid #314660}
+.coach-icon{color:#8ecae8}
+.coach strong{color:#d7e5fa}
+.actions-title{color:#f4f6fe}
+.answer{background:#182436;color:#eaf0fa;border-color:#344660;box-shadow:none}
+.answer .answer-icon{background:#26344a;color:#c0d0e9}
+.answer small{color:#b3c4d8}
+.answer:hover{background:#213249;box-shadow:0 7px 24px #0004;border-color:#7287a5;transform:translateY(-1px)}
+.answer.tone-primary{border-color:#625698;background:#242440;color:#f1ebff}
+.answer.tone-primary .answer-icon{background:#3d346d;color:#d0bfff}
+.answer.tone-primary:hover{border-color:#aa93ff;background:#302b53}
+.answer.tone-good{border-color:#316a5a;background:#142f30;color:#dcfff2}
+.answer.tone-good .answer-icon{background:#235446;color:#8df0c8}
+.answer.tone-good:hover{border-color:#72d9b5;background:#194039}
+.answer.tone-warn{border-color:#796039;background:#352a1f;color:#ffefd0}
+.answer.tone-warn .answer-icon{background:#604622;color:#ffda88}
+.answer.tone-warn:hover{border-color:#ecbf68;background:#443322}
+.answer.tone-danger{border-color:#75434f;background:#36252f;color:#ffe1e7}
+.answer.tone-danger .answer-icon{background:#623443;color:#ffacba}
+.answer.tone-danger:hover{border-color:#f28ea0;background:#492b38}
+.answer.secondary{border-style:dashed}
+.quickbar{border-top-color:#324158}
+.quick-title{color:#94a6bf}
+.quick{color:#d8e5f7;background:#1d293c;border-color:#3b4c66}
+.quick:hover{background:#2a3a50;border-color:#7e91b0}
+.quick.objection{background:#30294a;color:#d9c6ff;border-color:#6d5a9e}
+.quick.objection:hover{background:#44355f;border-color:#b19af2}
+.quick.callback{background:#34291c;color:#ffdaa0;border-color:#795a30}
+.quick.callback:hover{background:#4a3420;border-color:#dfaf69}
+.quick.end{background:#35252e;color:#ffadbb;border-color:#774550}
+.quick.end:hover{background:#4b2c3a;border-color:#e1879a}
+.sidecard{background:#141f30}
+.side-head h2{color:#f0f3fe}
+.trail-item:not(:last-child)::before{background:#394a66}
+.trail-dot{background:#1a2738;border-color:#50617c;color:#aebed7}
+.trail-item.current .trail-dot{background:#a58bff;border-color:#a58bff;color:#131222;box-shadow:0 0 0 3px #a58bff20}
+.trail-item.past .trail-dot{background:#21493d;border-color:#56b995;color:#b1f4dc}
+.trail-label{color:#ecf2fc}
+.trail-via{color:#a3b4cc}
+.trail-item.past:hover .trail-label{color:#cbbcff}
+.side-tip{background:#1e2a41;border-color:#3c4d6b;color:#c1d1e6}
+.side-tip strong{color:#d7caff}
+.tool-help{background:#141e30}
+.tool-help details{color:#b8c7d9}
+.tool-help summary{color:#e1eafa}
+.tool-help kbd{background:#232e43;border-color:#4b5e78;color:#f3eeff}
+.footer{color:#90a3bd}
+.link-btn{color:#bcaaff}
+.link-btn:hover{color:#eee2ff}
+.final-card{background:#15392f;border-color:#3b967c;color:#b4f6d8}
+.final-card.warn{background:#3e301d;border-color:#a78340;color:#ffe3a7}
+.final-card.danger{background:#3f2732;border-color:#ad5a72;color:#ffc2d0}
+.final-card p{color:#d7e1ea}
+.fade{background:rgba(2,7,16,.76);backdrop-filter:blur(4px)}
+.drawer{background:#111a2a;color:#edf2fc;border-left:1px solid #465370;box-shadow:-24px 0 70px #000a}
+.drawer-head{background:linear-gradient(120deg,#211f3e,#19263a);border-color:#37445e}
+.drawer-head h2{color:#f3f1ff}
+.drawer-head p{color:#bbc6da}
+.drawer-close{background:#29334a;color:#e9eeff;border-color:#56637f}
+.drawer-close:hover{background:#3b3d64}
+.search-wrap::before{color:#a3b2c7}
+.search-wrap input{color:#f1f5fd;background:#202d41;border-color:#4c5b77;outline-color:#ab90ff}
+.search-wrap input::placeholder{color:#aebbd0;opacity:1}
+.obj-option{background:#1a2639;border-color:#3a4c65;color:#ecf1fc}
+.obj-option:hover{background:#27364d;border-color:#637a9d}
+.obj-option.active{background:#312b52;border-color:#a38aed;color:#ede6ff}
+.obj-option small{color:#ffe1a2;background:#4d381f}
+.obj-detail{background:#242944;border-color:#61588d}
+.obj-detail small{color:#c4b5ff}
+.obj-detail p{color:#f4f4fe}
+.obj-detail .draft{background:#40331f;border-color:#8b6c38;color:#ffe1a0}
+.drawer-footer{background:#141e30;border-top-color:#36465c}
+.btn-main{background:#a48dff;color:#181426}
+.btn-main:hover{background:#c1aeff}
+.btn-soft{background:#243147;border-color:#50617d;color:#e4ecfa}
+.btn-soft:hover{background:#32415b}
+.no-results{color:#b4c3d8}
+.toast{background:#24324a;border-color:#6b77a4;color:#f9f7ff;box-shadow:0 14px 48px #0009}
+@media(max-width:610px){
+  .topbar{border-bottom-color:#364361}
+  .say-box{background:linear-gradient(145deg,#222441,#1a2b3e)}
+  [data-tip]:hover::after,[data-tip]:focus-visible::after{max-width:min(225px,75vw)}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar"><div class="top-inner">
+  <div class="logo"><div class="brand-symbol">А</div><div><div class="brand-title">АЛЬТЕРНАТИВА <span style="color:#b7a5ff;font-weight:500">/ Навигатор</span></div><div class="brand-sub">Помощник менеджера во время звонка</div></div></div>
+  <div class="top-actions"><span class="demo-pill" title="Работает без подключения к CRM и сети">● Offline demo</span><div class="mode-switch" role="group" aria-label="Режим менеджера"><button type="button" id="modeNovice" class="active">Новичок</button><button type="button" id="modeExpert">Опытный</button></div><button class="icon-btn" type="button" id="topHelp" aria-label="Подсказки по управлению" data-tip="Клавиши 1–5 выбирают ответ, O открывает возражения, Esc закрывает панель">?</button></div>
+</div></header>
+<main class="layout">
+  <section class="strip" aria-label="Демонстрационная карточка"><div class="client-grid"><div class="client-item"><span>Клиент · пример</span><strong id="clientName">Анна</strong></div><div class="client-item"><span>Автомобиль</span><strong id="clientCar">Kia Rio</strong></div><div class="client-item"><span>Полис ОСАГО до</span><strong id="clientExpiry">20 ноября</strong></div></div><div class="connection"><span class="connection-dot"></span>Локально · без CRM</div></section>
+  <div class="workspace">
+    <div class="left-pane">
+      <article class="card conversation" aria-live="polite" aria-atomic="false">
+        <div class="card-head"><div class="step-line"><span class="step-badge" id="stepBadge">ШАГ 01</span><span class="step-type" id="stepType">Начало разговора</span></div><button type="button" class="icon-help" id="stageHelp" data-tip="Система показывает только текущий шаг. Вы выбираете реальный ответ клиента." aria-label="Что это за этап">?</button></div>
+        <h1 class="section-name" id="stepTitle">Приветствие</h1>
+        <div class="say-box"><div class="say-header"><span class="say-label">Сказать клиенту</span><button class="copy-btn" id="copySpeech" type="button" data-tip="Копировать реплику для проверки или обучения">⧉ Копировать</button></div><p class="say-text" id="speech"></p></div>
+        <div class="coach" id="coach"><span class="coach-icon" aria-hidden="true">ⓘ</span><div><strong>Подсказка менеджеру</strong><p id="coachText"></p></div></div>
+        <div class="final-card hidden" id="finalCard" role="status"><div style="font-size:25px" id="finalSymbol">✓</div><div><b id="finalTitle">Разговор завершён</b><p id="finalText"></p></div></div>
+      </article>
+      <section class="card actions-card"><h2 class="actions-title" id="answerTitle">Что ответил клиент?</h2><p class="actions-sub" id="answerDesc">Выберите вариант. Следующая реплика появится автоматически.</p><div class="answers" id="answers"></div>
+        <div class="quickbar"><span class="quick-title">В любой момент</span><button type="button" class="quick objection" id="openObjections">☷ Возражение <span id="objCount">11</span></button><button type="button" class="quick callback" id="quickCallback">↷ Перезвонить</button><button type="button" class="quick end" id="quickRefusal">× Клиент отказался</button></div>
+      </section>
+    </div>
+    <aside class="side" aria-label="История и инструменты">
+      <div class="card sidecard"><div class="side-head"><h2>Маршрут разговора</h2><button type="button" class="icon-help" data-tip="Нажмите на пройденный шаг, чтобы вернуться и выбрать другую ветку" aria-label="Как пользоваться историей">?</button></div><p class="side-muted">Запоминаются только выбранные шаги. Никакой лишней карты на весь экран.</p><div id="trail" class="trail"></div><div class="side-tip"><strong>Можно передумать.</strong> Нажмите на предыдущий этап: последующие ответы сбросятся, и вы сможете выбрать другой путь.</div></div>
+      <div class="card tool-help"><details id="usageHelp"><summary>Управление и подсказки</summary><p>Клавиши <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> выбирают ответы; <kbd>O</kbd> открывает возражения; <kbd>Esc</kbd> закрывает шторку; <kbd>Backspace</kbd> возвращает на шаг назад (если вы не печатаете).</p><p>Синий цвет обозначает обычное продолжение, зелёный результат, жёлтый перенос разговора, красный отказ. Смысл всегда написан словами, цвет не обязателен для понимания.</p></details></div>
+    </aside>
+  </div>
+  <div class="footer"><span>Прототип v2 · Основан на сценарии Николая · Все данные демонстрационные · Ничего не отправляется в amoCRM</span><button type="button" class="link-btn" id="resetCall">⟲ Начать новый звонок</button></div>
+</main></div>
+<div class="fade" id="shade" aria-hidden="true"></div>
+<section class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" id="drawer"><div class="drawer-head"><div><div class="overline">Помощь во время разговора</div><h2 id="drawerTitle">Работа с возражениями</h2><p>Ваша текущая ветка не изменится.</p></div><button type="button" id="closeDrawer" class="drawer-close" aria-label="Закрыть">×</button></div><div class="drawer-scroll"><div class="search-wrap"><input type="search" id="objSearch" placeholder="Найти: дорого, агент, документы…" autocomplete="off" aria-label="Поиск по возражениям"></div><div class="obj-list" id="objectionList"></div><div class="obj-detail hidden" id="objDetail"><small>Готовая реплика</small><p id="objReply"></p><div id="objDraft" class="draft hidden">Черновик: формулировку ещё должен утвердить заказчик.</div><button type="button" class="copy-btn" id="copyObjection">⧉ Копировать ответ</button></div></div><div class="drawer-footer"><button type="button" id="finishObjection" class="btn-main" style="flex:1">Продолжить разговор</button><button type="button" id="dismissObj" class="btn-soft">Закрыть</button></div></section>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script id="source-data" type="application/json">{"ui":{"brand":"Альтернатива","appName":"Ассистент продаж","demo":"Демонстрационные данные","demoNote":"Автономный прототип. Данные не связаны с amoCRM.","client":"Клиент","vehicle":"Автомобиль","expiry":"ОСАГО до","unknown":"Уточнить в разговоре","stage":"Этап разговора","mode":"Режим","novice":"Новичок","expert":"Опытный","goal":"Цель этапа","possibleAnswers":"Возможные ответы","nextStep":"Что делать дальше","objections":"Возражения","back":"Назад","continue":"Продолжить","restart":"Начать заново","close":"Закрыть","objectionTitle":"Ответ на возражение","objectionDraft":"Текст для утверждения заказчиком","callback":"Понимаю. Когда лучше перезвонить?","difference":"ОСАГО покрывает вашу ответственность перед другими, а дополнительная программа может защитить ваш автомобиль в отдельных ситуациях. Конкретные риски зависят от условий страховщика.","miniDeclined":"Понял(а), тогда рассматриваем только ОСАГО.","miniInterested":"Сравним оба варианта и уточним условия дополнительной программы.","miniNoDetails":"Подтверждённые условия мини-КАСКО пока не указаны. Уточните их перед предложением клиенту.","miniDetails":"Подтверждённые условия","insurer":"Страховая компания","price":"Стоимость","risks":"Покрываемые риски","limit":"Лимит выплаты","exclusions":"Существенные исключения","rubles":"рублей","finished":"Разговор завершён"},"stages":[{"id":"greeting","title":"Приветствие","goal":"Представиться, назвать повод и уточнить, удобно ли говорить.","possibleAnswers":"Удобно · Неудобно","guidance":"Если клиенту неудобно, спросите время для повторного звонка. Виджет не создаёт задачу в CRM.","actions":[["convenient","Удобно","primary"],["inconvenient","Неудобно","secondary"]]},{"id":"need","title":"Уточнение потребности","full":"Подскажите, вам нужен только обязательный полис или интересно посмотреть вариант с дополнительной защитой своего автомобиля?","brief":"Только ОСАГО или дополнительная защита?","goal":"Понять интерес к дополнительной защите.","possibleAnswers":"Только ОСАГО · Интересует защита · В чём разница?","guidance":"Выбор меняет следующую подсказку только внутри прототипа.","actions":[["onlyOsago","Только ОСАГО","primary"],["extraProtection","Интересует дополнительная защита","secondary"],["difference","В чём разница?","text"]]},{"id":"osago","title":"Предложение ОСАГО","goal":"Озвучить подтверждённое предложение или обещать актуальный расчёт.","possibleAnswers":"Готов оформить · Нужен расчёт · Есть возражение","guidance":"После ОСАГО перейдите к отдельному этапу мини-КАСКО.","actions":[["toMini","Далее: мини-КАСКО","primary"]]},{"id":"mini","title":"Предложение мини-КАСКО","full":"Также могу предложить ОСАГО вместе с мини-КАСКО. Дополнительная программа защищает ваш автомобиль от отдельных рисков. Давайте сравним оба варианта?","brief":"Сравним ОСАГО и вариант с мини-КАСКО?","goal":"Коротко предложить сравнение, не обещая неподтверждённые условия.","possibleAnswers":"Интересно · Не нужно · Подробнее об условиях","guidance":"Если клиент отказывается, спокойно вернитесь к ОСАГО. Прохождение этапа не обязывает навязывать продукт.","actions":[["miniYes","Интересно","primary"],["miniNo","Не нужно","secondary"],["miniDetails","Подробнее об условиях","text"]]},{"id":"finish","title":"Завершение разговора","full":"Выберите результат разговора, чтобы увидеть подходящую фразу.","brief":"Выберите результат разговора.","goal":"Согласовать следующий шаг или вежливо завершить разговор.","possibleAnswers":"Готов оформить · Хочет расчёт · Отказался","guidance":"Прототип не фиксирует результат в CRM и не отправляет сообщения.","actions":[["ready","Готов оформить","primary"],["calculation","Хочет расчёт","secondary"],["declined","Отказался","secondary"]]}],"objections":[["expensive","Дорого","Сравниваете с прошлогодней стоимостью или с другим предложением? Давайте проверим варианты.","specified"],["think","Я подумаю","Что вам важно уточнить для решения? Когда будет удобно связаться после отправки расчёта?","specified"],["ownAgent","У меня свой агент","Могу просто направить альтернативный расчёт, чтобы было с чем сравнить.","specified"],["cheaper","У конкурента дешевле","Давайте сравним не только цену, но и страховую компанию, условия и дополнительные услуги.","specified"],["early","Ещё рано","Полис можно оформить заранее с началом действия после окончания текущего. Когда вернуться к вопросу?","specified"],["noMini","Не хочу мини-КАСКО","Понял(а), тогда рассматриваем только ОСАГО.","specified"],["noTime","Нет времени","Понимаю. Когда будет удобно коротко обсудить продление?","draft"],["onlineTrust","Не доверяю оформлению онлайн","Понимаю ваше беспокойство. Могу сначала объяснить порядок оформления и проверки документов.","draft"],["documents","Не хочу отправлять документы","Понимаю. Давайте уточним, какие данные понадобятся и как их можно безопасно передать.","draft"],["alreadyInsured","Уже оформил полис","Отлично. Уточню только, нужна ли вам помощь с другими вопросами страхования?","draft"],["difference","Не понимаю разницу между ОСАГО и мини-КАСКО","ОСАГО покрывает ответственность перед другими. Мини-КАСКО может покрывать отдельные риски для вашего автомобиля; условия зависят от программы.","draft"]],"client":{"clientName":"Анна","vehicle":"Kia Rio","expiryDate":"20 ноября","managerName":"Алексей","osago":{"insurer":null,"price":null},"miniKasko":null},"outcomes":{"ready":"Проверим, изменились ли ваши данные за год. Затем отправлю проект для сверки и безопасную ссылку на оплату. В какой мессенджер удобнее направить?","calculation":"Отправлю варианты в удобный вам мессенджер. Договоримся, когда будет удобно обсудить решение?","declined":"Спасибо за разговор. Если потребуется сравнить условия страхования, будем рады помочь. Хорошего дня!"},"needHints":{"onlyOsago":"Клиенту нужен только ОСАГО. Коротко озвучьте доступный вариант или предложите расчёт.","extraProtection":"Клиент интересуется дополнительной защитой. После ОСАГО сравните оба варианта."},"greeting":{"helloWithName":"{clientName}, добрый день!","helloWithoutName":"Добрый день!","managerWithName":"Меня зовут {managerName}, страховой сервис «Альтернатива».","managerWithoutName":"Страховой сервис «Альтернатива».","expiryAndVehicle":"У вас {expiryDate} заканчивается ОСАГО на {vehicle}.","expiryOnly":"У вас {expiryDate} заканчивается ОСАГО.","vehicleOnly":"Хочу обсудить продление ОСАГО на {vehicle}.","noDetails":"Хочу обсудить продление вашего ОСАГО.","question":"Я подготовил(а) варианты продления. Удобно сейчас минуту поговорить?","brief":"Продление ОСАГО. Удобно минуту поговорить?"},"osagoOffer":{"confirmed":"По ОСАГО сейчас есть вариант от {insurer} за {price} рублей.","unconfirmed":"Я подготовлю для вас актуальный расчёт ОСАГО и предложу подходящие варианты.","briefConfirmed":"ОСАГО: {insurer}, {price} ₽.","briefUnconfirmed":"Подготовлю актуальный расчёт ОСАГО."}}</script>
+<script>
+(()=>{'use strict';
+const source=JSON.parse(document.getElementById('source-data').textContent);
+const objections=source.objections.map(([id,label,answer,status])=>({id,label,answer,status}));
+const client=source.client;
+const quote=source.osagoOffer.unconfirmed;
+const greeting=[
+  `${client.clientName}, добрый день!`,
+  `Меня зовут ${client.managerName}, страховой сервис «Альтернатива».`,
+  `У вас ${client.expiryDate} заканчивается ОСАГО на ${client.vehicle}.`,
+  source.greeting.question
+].join(' ');
+const ending=source.outcomes;
+const stages={
+  intro:{title:'Приветствие',kind:'Начало разговора',speech:greeting,brief:'Добрый день! Удобно минуту поговорить о продлении ОСАГО?',coach:'Сначала получите согласие на разговор. Если неудобно, не переводите клиента сразу к предложению.',answers:[{label:'Да, удобно',icon:'✓',tone:'good',to:'need'},{label:'Сейчас неудобно',icon:'↷',tone:'warn',to:'callback'},{label:'Не интересует',icon:'×',tone:'danger',to:'declined'}]},
+  need:{title:'Выясняем потребность',kind:'Потребность клиента',speech:source.stages[1].full,brief:source.stages[1].brief,coach:source.stages[1].goal,answers:[{label:'Только ОСАГО',icon:'→',tone:'primary',to:'osago'},{label:'Интересна доп. защита',icon:'↗',tone:'primary',to:'osagoPlus'},{label:'В чём разница?',icon:'?',tone:'neutral',to:'difference'}]},
+  difference:{title:'Поясняем разницу',kind:'Уточняющий вопрос',speech:source.ui.difference,brief:'ОСАГО — ответственность перед другими. Мини-КАСКО — отдельные риски для своего автомобиля.',coach:'Не утверждайте конкретные условия мини-КАСКО без подтверждённых данных о продукте.',answers:[{label:'Нужно только ОСАГО',icon:'→',tone:'primary',to:'osago'},{label:'Давайте сравним варианты',icon:'↗',tone:'good',to:'osagoPlus'},{label:'Пока не готов решать',icon:'↷',tone:'warn',to:'callback'}]},
+  osago:{title:'Предложение ОСАГО',kind:'Основное предложение',speech:quote,brief:source.osagoOffer.briefUnconfirmed,coach:source.stages[2].goal+' Стоимость и название страховщика не выдумываем.',answers:[{label:'Готов оформить',icon:'✓',tone:'good',to:'ready'},{label:'Нужен расчёт',icon:'↗',tone:'primary',to:'calculation'},{label:'Интересна доп. защита',icon:'+',tone:'primary',to:'mini'},{label:'Отказался',icon:'×',tone:'danger',to:'declined'}]},
+  osagoPlus:{title:'Сначала предложение ОСАГО',kind:'Клиент интересуется защитой',speech:quote,brief:source.osagoOffer.briefUnconfirmed,coach:source.needHints.extraProtection,answers:[{label:'Сравнить с мини-КАСКО',icon:'↗',tone:'good',to:'mini'},{label:'Только расчёт ОСАГО',icon:'→',tone:'primary',to:'calculation'},{label:'Готов оформить ОСАГО',icon:'✓',tone:'good',to:'ready'}]},
+  mini:{title:'Дополнительная защита',kind:'Мини-КАСКО по интересу',speech:source.stages[3].full,brief:source.stages[3].brief,coach:'Условия, лимиты и исключения неизвестны. Прототип не показывает выдуманных страховых покрытий.',answers:[{label:'Интересно, давайте расчёт',icon:'↗',tone:'good',to:'calculation'},{label:'Подробнее об условиях',icon:'?',tone:'neutral',to:'miniTerms'},{label:'Нет, только ОСАГО',icon:'→',tone:'primary',to:'osago'},{label:'Не интересует совсем',icon:'×',tone:'danger',to:'declined'}]},
+  miniTerms:{title:'Уточнение условий',kind:'Вопрос о мини-КАСКО',speech:source.ui.miniNoDetails,brief:'Конкретные условия мини-КАСКО нужно уточнить перед предложением.',coach:'Нельзя обещать покрытие рисков, выплаты и исключения, пока нет проверенной программы.',answers:[{label:'Отправить сравнение позже',icon:'↗',tone:'primary',to:'calculation'},{label:'Вернуться к ОСАГО',icon:'→',tone:'primary',to:'osago'},{label:'Не интересно',icon:'×',tone:'danger',to:'declined'}]},
+  callback:{title:'Согласуем перезвон',kind:'Клиент занят',speech:source.ui.callback,brief:source.ui.callback,coach:'Уточните согласованное время и занесите его в CRM вручную. Эта автономная демоверсия не создаёт задачи.',answers:[{label:'Время согласовано',icon:'✓',tone:'good',to:'scheduled'},{label:'Клиент может поговорить',icon:'→',tone:'primary',to:'need'},{label:'Не звонить больше',icon:'×',tone:'danger',to:'declined'}]},
+  ready:{title:'Готов к оформлению',kind:'Результат звонка',speech:ending.ready,brief:'Сверить данные и согласовать дальнейшее оформление.',coach:'До оплаты нужно подтвердить актуальность условий и данные клиента. Демо ничего не оформляет.',final:{label:'Готовность к оформлению',detail:'Итог необходимо внести в CRM вручную.',icon:'✓',tone:'good'},answers:[]},
+  calculation:{title:'Нужен расчёт',kind:'Результат звонка',speech:ending.calculation,brief:'Отправить расчёт и согласовать следующий контакт.',coach:'Это только подсказка. Отправка, задача и запись результата в CRM не выполняются.',final:{label:'Запрос расчёта',detail:'Уточните удобный канал и занесите задачу в CRM вручную.',icon:'✓',tone:'good'},answers:[]},
+  scheduled:{title:'Перезвон согласован',kind:'Результат звонка',speech:'Спасибо! Тогда свяжемся с вами в согласованное время. Хорошего дня!',brief:'Перезвон в согласованное время.',coach:'Это только отметка в интерфейсе. Обязательно сохраните время звонка в CRM вручную.',final:{label:'Нужен повторный звонок',detail:'Автоматического напоминания нет.',icon:'↷',tone:'warn'},answers:[]},
+  declined:{title:'Вежливо завершаем',kind:'Результат звонка',speech:ending.declined,brief:'Спасибо за разговор. Хорошего дня!',coach:'Зафиксируйте отказ в CRM вручную. Не продолжайте навязывать предложение.',final:{label:'Клиент отказался',detail:'Итог и требуемые ограничения контактов нужно зафиксировать в CRM.',icon:'×',tone:'danger'},answers:[]}
+};
+const $=id=>document.getElementById(id);const STORAGE_KEY='alternativa-navigator-v2-local-demo';
+let mode='novice',history=[{id:'intro',via:'Начало звонка'}],drawerOpen=false,selectedObj=null;
+try{const stored=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');if(stored&&Array.isArray(stored.history)&&stored.history.length&&stored.history[0].id==='intro'&&stored.history.every(x=>stages[x.id])&&['novice','expert'].includes(stored.mode)){history=stored.history.slice(0,60);mode=stored.mode}}catch{}
+function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({history,mode}))}catch{}}
+function current(){return stages[history.at(-1).id]}
+function textOf(step){return mode==='expert'?step.brief:step.speech}
+function toast(text){const t=$('toast');t.textContent=text;t.classList.add('visible');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('visible'),2200)}
+async function copyText(text){try{await navigator.clipboard.writeText(text);toast('Текст скопирован')}catch{const area=document.createElement('textarea');area.value=text;area.style.cssText='position:fixed;left:-9999px;top:-9999px';document.body.append(area);area.select();let ok=false;try{ok=document.execCommand('copy')}catch{}area.remove();toast(ok?'Текст скопирован':'Копирование недоступно. Выделите текст вручную.')}}
+function go(id,label){if(!stages[id])return;history.push({id,via:label});save();render();window.scrollTo({top:0,behavior:'smooth'})}
+function jump(index){if(index>=history.length-1||index<0)return;history=history.slice(0,index+1);save();render()}
+function restart(){if(history.length>1&&!confirm('Начать новый звонок? История текущего маршрута будет сброшена.'))return;history=[{id:'intro',via:'Начало звонка'}];save();render()}
+function render(){const step=current();$('modeNovice').classList.toggle('active',mode==='novice');$('modeExpert').classList.toggle('active',mode==='expert');$('stepBadge').textContent=`ШАГ ${String(history.length).padStart(2,'0')}`;$('stepType').textContent=step.kind;$('stepTitle').textContent=step.title;$('speech').textContent=textOf(step);$('coach').classList.toggle('hidden',mode==='expert');$('coachText').textContent=step.coach;
+  $('finalCard').classList.toggle('hidden',!step.final);if(step.final){$('finalSymbol').textContent=step.final.icon;$('finalTitle').textContent=step.final.label;$('finalText').textContent=step.final.detail;$('finalCard').className=`final-card ${step.final.tone==='warn'?'warn':step.final.tone==='danger'?'danger':''}`}
+  $('answers').replaceChildren();$('answerTitle').textContent=step.final?'Разговор завершён':'Что ответил клиент?';$('answerDesc').textContent=step.final?'Можно скопировать итог, вернуться к предыдущему шагу или начать новый звонок.':'Выберите вариант. Следующая реплика появится автоматически.';
+  if(step.final){const copy=document.createElement('button');copy.className='answer tone-good';copy.innerHTML='<span class="answer-icon">⧉</span><span>Копировать итог разговора</span>';copy.addEventListener('click',()=>copyText(`${step.final.label}. ${step.final.detail}`));$('answers').append(copy);const reset=document.createElement('button');reset.className='answer tone-primary';reset.innerHTML='<span class="answer-icon">↺</span><span>Начать новый разговор</span>';reset.addEventListener('click',restart);$('answers').append(reset)}else step.answers.forEach((a,i)=>{const b=document.createElement('button');b.type='button';b.className=`answer tone-${a.tone}`;b.setAttribute('aria-label',`${i+1}. ${a.label}`);const ic=document.createElement('span');ic.className='answer-icon';ic.textContent=a.icon;const lab=document.createElement('span');lab.textContent=a.label;b.append(ic,lab);b.addEventListener('click',()=>go(a.to,a.label));$('answers').append(b)});
+  $('trail').replaceChildren();history.forEach((item,index)=>{const stage=stages[item.id],b=document.createElement('button');b.type='button';b.className='trail-item '+(index===history.length-1?'current':'past');b.disabled=index===history.length-1;if(index<history.length-1)b.title='Вернуться к этому моменту разговора';const dot=document.createElement('span');dot.className='trail-dot';dot.textContent=index===history.length-1?'●':'✓';const content=document.createElement('div');const title=document.createElement('div');title.className='trail-label';title.textContent=stage.title;const via=document.createElement('div');via.className='trail-via';via.textContent=item.via;content.append(title,via);b.append(dot,content);b.addEventListener('click',()=>jump(index));$('trail').append(b)});
+  $('quickCallback').disabled=history.at(-1).id==='callback'||!!step.final;$('quickRefusal').disabled=history.at(-1).id==='declined'||!!step.final;
+}
+function setMode(next){mode=next;save();render()}
+function listObjections(query=''){const q=query.toLocaleLowerCase('ru').trim();const visible=objections.filter(x=>`${x.label} ${x.answer}`.toLocaleLowerCase('ru').includes(q));$('objectionList').replaceChildren();if(!visible.length){const empty=document.createElement('div');empty.className='no-results';empty.textContent='По этому запросу возражений не найдено.';$('objectionList').append(empty)}
+visible.forEach(item=>{const b=document.createElement('button');b.type='button';b.className='obj-option'+(selectedObj===item.id?' active':'');const span=document.createElement('span');span.textContent=item.label;b.append(span);if(item.status==='draft'){const d=document.createElement('small');d.textContent='черновик';b.append(d)}b.addEventListener('click',()=>{selectedObj=item.id;listObjections($('objSearch').value);showObject()});$('objectionList').append(b)})}
+function showObject(){const item=objections.find(x=>x.id===selectedObj);$('objDetail').classList.toggle('hidden',!item);if(!item)return;$('objReply').textContent=item.answer;$('objDraft').classList.toggle('hidden',item.status!=='draft')}
+function openDrawer(){drawerOpen=true;$('drawer').classList.add('open');$('shade').classList.add('show');$('drawer').setAttribute('aria-hidden','false');document.body.style.overflow='hidden';$('objSearch').value='';listObjections();showObject();setTimeout(()=>$('objSearch').focus(),120)}
+function closeDrawer(){drawerOpen=false;$('drawer').classList.remove('open');$('shade').classList.remove('show');$('drawer').setAttribute('aria-hidden','true');document.body.style.overflow='';$('openObjections').focus()}
+$('modeNovice').addEventListener('click',()=>setMode('novice'));
+$('modeExpert').addEventListener('click',()=>setMode('expert'));
+$('copySpeech').addEventListener('click',()=>copyText(textOf(current())));
+$('copyObjection').addEventListener('click',()=>{const item=objections.find(x=>x.id===selectedObj);if(item)copyText(item.answer)});
+$('openObjections').addEventListener('click',openDrawer);
+$('closeDrawer').addEventListener('click',closeDrawer);$('dismissObj').addEventListener('click',closeDrawer);$('finishObjection').addEventListener('click',closeDrawer);$('shade').addEventListener('click',closeDrawer);
+$('objSearch').addEventListener('input',e=>listObjections(e.target.value));
+$('quickCallback').addEventListener('click',()=>go('callback','Просьба перезвонить'));
+$('quickRefusal').addEventListener('click',()=>go('declined','Клиент отказался'));
+$('resetCall').addEventListener('click',restart);
+$('topHelp').addEventListener('click',()=>{$('usageHelp').open=true;$('usageHelp').scrollIntoView({behavior:'smooth',block:'center'})});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&drawerOpen){e.preventDefault();closeDrawer();return}const inField=['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)||document.activeElement?.isContentEditable;if(inField||e.altKey||e.metaKey||e.ctrlKey||drawerOpen)return;if(/^[1-9]$/.test(e.key)){const btn=$('answers').querySelectorAll('button')[Number(e.key)-1];if(btn){e.preventDefault();btn.click()}}else if(e.key.toLowerCase()==='o'){e.preventDefault();openDrawer()}else if(e.key==='Backspace'){e.preventDefault();jump(history.length-2)}});
+$('clientName').textContent=client.clientName;$('clientCar').textContent=client.vehicle;$('clientExpiry').textContent=client.expiryDate;$('objCount').textContent=objections.length;
+$('drawer').setAttribute('aria-hidden','true');render();
+})();
+</script>
+</body></html>
